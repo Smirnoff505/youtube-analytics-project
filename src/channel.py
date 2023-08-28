@@ -14,7 +14,7 @@ class Channel:
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
-        reduction = self.youtube.channels().list(part="snippet,statistics", id=self.__channel_id).execute()
+        reduction = self.get_service().channels().list(part="snippet,statistics", id=self.__channel_id).execute()
         self.title = reduction['items'][0]['snippet']['title']
         self.channel_description = reduction['items'][0]['snippet']['description']
         self.url = f'https://www.youtube.com/channel/{self.__channel_id}'
@@ -28,7 +28,7 @@ class Channel:
 
     def print_info(self) -> Response:
         """Выводит в консоль информацию о канале."""
-        response = self.youtube.channels().list(
+        response = self.get_service().channels().list(
             part="snippet,statistics",
             id=self.__channel_id
         ).execute()
@@ -36,7 +36,7 @@ class Channel:
 
     @classmethod
     def get_service(cls):
-        return cls.youtube
+        return build('youtube', 'v3', developerKey=cls.api_key)
 
     def to_json(self, name_file):
         channel_list = {
