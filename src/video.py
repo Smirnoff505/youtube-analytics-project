@@ -12,11 +12,19 @@ class Video(object):
 
     def __init__(self, video_id: str):
         self.video_id = video_id
-        reduction = self.get_service().videos().list(id=video_id, part='snippet,statistics').execute()
-        self.title = reduction['items'][0]['snippet']['title']
-        self.url = f'https://www.youtube.com/watch?v={self.video_id}'
-        self.view_count = reduction['items'][0]['statistics']['viewCount']
-        self.like_count = reduction['items'][0]['statistics']['likeCount']
+        try:
+            reduction = self.get_service().videos().list(id=video_id, part='snippet,statistics').execute()
+            self.title = reduction['items'][0]['snippet']['title']
+        except Exception:
+            self.title = None
+            self.url = None
+            self.view_count = None
+            self.like_count = None
+        else:
+            self.title = reduction['items'][0]['snippet']['title']
+            self.url = f'https://www.youtube.com/watch?v={self.video_id}'
+            self.view_count = reduction['items'][0]['statistics']['viewCount']
+            self.like_count = reduction['items'][0]['statistics']['likeCount']
 
     def __str__(self):
         return f'{self.title}'
